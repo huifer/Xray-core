@@ -119,7 +119,7 @@ func (r *BufferedReader) writeToInternal(writer io.Writer) (int64, error) {
 	var sc SizeCounter
 	if r.Buffer != nil {
 		sc.Size = int64(r.Buffer.Len())
-		if err := mbWriter.WriteMultiBuffer(r.Buffer); err != nil {
+		if err, _ := mbWriter.WriteMultiBuffer(r.Buffer); err != nil {
 			return 0, err
 		}
 		r.Buffer = nil

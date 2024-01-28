@@ -183,7 +183,7 @@ func transferResponse(timer signal.ActivityUpdater, session *encoding.ServerSess
 			return err
 		}
 
-		if err := bodyWriter.WriteMultiBuffer(data); err != nil {
+		if err, _ := bodyWriter.WriteMultiBuffer(data); err != nil {
 			return err
 		}
 	}
@@ -199,7 +199,7 @@ func transferResponse(timer signal.ActivityUpdater, session *encoding.ServerSess
 	account := request.User.Account.(*vmess.MemoryAccount)
 
 	if request.Option.Has(protocol.RequestOptionChunkStream) && !account.NoTerminationSignal {
-		if err := bodyWriter.WriteMultiBuffer(buf.MultiBuffer{}); err != nil {
+		if err, _ := bodyWriter.WriteMultiBuffer(buf.MultiBuffer{}); err != nil {
 			return err
 		}
 	}

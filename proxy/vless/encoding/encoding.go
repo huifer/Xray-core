@@ -189,6 +189,7 @@ func XtlsRead(reader buf.Reader, writer buf.Writer, timer signal.ActivityUpdater
 				return proxy.CopyRawConnIfExist(ctx, conn, writerConn, writer, timer)
 			}
 			buffer, err := visionReader.ReadMultiBuffer()
+			newError("上行流量", buffer.Len())
 			if !buffer.IsEmpty() {
 				timer.Update()
 				if trafficState.ReaderSwitchToDirectCopy {
@@ -204,7 +205,7 @@ func XtlsRead(reader buf.Reader, writer buf.Writer, timer signal.ActivityUpdater
 						}
 					}
 				}
-				if werr := writer.WriteMultiBuffer(buffer); werr != nil {
+				if werr, _ := writer.WriteMultiBuffer(buffer); werr != nil {
 					return werr
 				}
 			}
@@ -239,10 +240,11 @@ func XtlsWrite(reader buf.Reader, writer buf.Writer, timer signal.ActivityUpdate
 					ct.Add(int64(buffer.Len()))
 				}
 				timer.Update()
-				if werr := writer.WriteMultiBuffer(buffer); werr != nil {
+				if werr, _ := writer.WriteMultiBuffer(buffer); werr != nil {
 					return werr
 				}
 			}
+			newError("下行流量", buffer.Len())
 			if err != nil {
 				return err
 			}

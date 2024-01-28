@@ -232,6 +232,16 @@ func (d *DefaultDispatcher) Dispatch(ctx context.Context, destination net.Destin
 	}
 	sniffingRequest := content.SniffingRequest
 	inbound, outbound := d.getLink(ctx)
+	address := destination.Address
+	c1, _ := stats.GetOrRegisterCounter(d.stats, address.Domain()+"入站")
+	value1 := c1.Value()
+	c2, _ := stats.GetOrRegisterCounter(d.stats, address.Domain()+"出战")
+	value2 := c2.Value()
+
+	newError("网络地址 "+address.Domain(), "入站流量", value1, "出战流量", value2).AtInfo().WriteToLog()
+
+	//fixme: aaaaaa
+
 	if !sniffingRequest.Enabled {
 		go d.routedDispatch(ctx, outbound, destination)
 	} else {
@@ -439,6 +449,7 @@ func (d *DefaultDispatcher) routedDispatch(ctx context.Context, link *transport.
 		}
 		log.Record(accessMessage)
 	}
+	newError("Requested IP or Domain: ", destination.Address.String()).WriteToLog(session.ExportIDToError(ctx))
 
 	handler.Dispatch(ctx, link)
 }

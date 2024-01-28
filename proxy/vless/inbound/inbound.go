@@ -386,7 +386,7 @@ func (h *Handler) Process(ctx context.Context, network net.Network, connection s
 						p2, _ := strconv.ParseUint(localPort, 10, 16)
 						pro.Write([]byte{byte(p1 >> 8), byte(p1), byte(p2 >> 8), byte(p2)})
 					}
-					if err := serverWriter.WriteMultiBuffer(buf.MultiBuffer{pro}); err != nil {
+					if err, _ := serverWriter.WriteMultiBuffer(buf.MultiBuffer{pro}); err != nil {
 						return newError("failed to set PROXY protocol v", fb.Xver).Base(err).AtWarning()
 					}
 				}
@@ -504,13 +504,18 @@ func (h *Handler) Process(ctx context.Context, network net.Network, connection s
 	timer := signal.CancelAfterInactivity(ctx, cancel, sessionPolicy.Timeouts.ConnectionIdle)
 	ctx = policy.ContextWithBufferPolicy(ctx, sessionPolicy.Buffer)
 
+	domain := request.Destination().Address.Domain()
+	newError("日志1", domain)
+
 	link, err := dispatcher.Dispatch(ctx, request.Destination())
+
 	if err != nil {
 		return newError("failed to dispatch request to ", request.Destination()).Base(err).AtWarning()
 	}
 
 	serverReader := link.Reader // .(*pipe.Reader)
 	serverWriter := link.Writer // .(*pipe.Writer)
+
 	trafficState := proxy.NewTrafficState(account.ID.Bytes())
 	postRequest := func() error {
 		defer timer.SetTimeout(sessionPolicy.Timeouts.DownlinkOnly)
@@ -522,6 +527,8 @@ func (h *Handler) Process(ctx context.Context, network net.Network, connection s
 
 		if requestAddons.Flow == vless.XRV {
 			ctx1 := session.ContextWithInbound(ctx, nil) // TODO enable splice
+			// fixme: 这里是上行流量
+
 			err = encoding.XtlsRead(clientReader, serverWriter, timer, connection, input, rawInput, trafficState, ctx1)
 		} else {
 			// from clientReader.ReadMultiBuffer to serverWriter.WriteMultiBufer
@@ -549,7 +556,7 @@ func (h *Handler) Process(ctx context.Context, network net.Network, connection s
 		if err1 != nil {
 			return err1 // ...
 		}
-		if err := clientWriter.WriteMultiBuffer(multiBuffer); err != nil {
+		if err, _ := clientWriter.WriteMultiBuffer(multiBuffer); err != nil {
 			return err // ...
 		}
 		// Flush; bufferWriter.WriteMultiBufer now is bufferWriter.writer.WriteMultiBuffer

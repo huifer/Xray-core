@@ -119,6 +119,8 @@ func (h *DynamicInboundHandler) refresh() error {
 
 	uplinkCounter, downlinkCounter := getStatCounter(h.v, h.tag)
 
+	//fixme: 出入站流量
+
 	for i := uint32(0); i < concurrency; i++ {
 		port := h.allocatePort()
 		rawProxy, err := core.CreateObject(h.v, h.proxyConfig)

@@ -94,7 +94,7 @@ func (v *Dispatcher) Dispatch(ctx context.Context, destination net.Destination, 
 	}
 	outputStream := conn.link.Writer
 	if outputStream != nil {
-		if err := outputStream.WriteMultiBuffer(buf.MultiBuffer{payload}); err != nil {
+		if err, _ := outputStream.WriteMultiBuffer(buf.MultiBuffer{payload}); err != nil {
 			newError("failed to write first UDP payload").Base(err).WriteToLog(session.ExportIDToError(ctx))
 			conn.cancel()
 			return

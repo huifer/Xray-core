@@ -208,7 +208,7 @@ func (h *Handler) Process(ctx context.Context, link *transport.Link, dialer inte
 		if ok {
 			multiBuffer, err1 := timeoutReader.ReadMultiBufferTimeout(time.Millisecond * 500)
 			if err1 == nil {
-				if err := serverWriter.WriteMultiBuffer(multiBuffer); err != nil {
+				if err, _ := serverWriter.WriteMultiBuffer(multiBuffer); err != nil {
 					return err // ...
 				}
 			} else if err1 != buf.ErrReadTimeout {
@@ -216,7 +216,7 @@ func (h *Handler) Process(ctx context.Context, link *transport.Link, dialer inte
 			} else if requestAddons.Flow == vless.XRV {
 				mb := make(buf.MultiBuffer, 1)
 				newError("Insert padding with empty content to camouflage VLESS header ", mb.Len()).WriteToLog(session.ExportIDToError(ctx))
-				if err := serverWriter.WriteMultiBuffer(mb); err != nil {
+				if err, _ := serverWriter.WriteMultiBuffer(mb); err != nil {
 					return err // ...
 				}
 			}

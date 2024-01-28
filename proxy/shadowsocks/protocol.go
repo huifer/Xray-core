@@ -157,7 +157,7 @@ func WriteTCPRequest(request *protocol.RequestHeader, writer io.Writer) (buf.Wri
 		return nil, newError("failed to write address").Base(err)
 	}
 
-	if err := w.WriteMultiBuffer(buf.MultiBuffer{header}); err != nil {
+	if err, _ := w.WriteMultiBuffer(buf.MultiBuffer{header}); err != nil {
 		return nil, newError("failed to write header").Base(err)
 	}
 

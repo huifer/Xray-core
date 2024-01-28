@@ -182,7 +182,7 @@ func (s *Server) handleConnect(ctx context.Context, _ *http.Request, reader *buf
 		if err != nil {
 			return err
 		}
-		if err := link.Writer.WriteMultiBuffer(payload); err != nil {
+		if err, _ := link.Writer.WriteMultiBuffer(payload); err != nil {
 			return err
 		}
 		reader = nil

@@ -52,7 +52,7 @@ func (w *PipeConnWrapper) Write(p []byte) (n int, err error) {
 		pLen -= int(buffer.Len())
 		mb = append(mb, buffer)
 	}
-	err = w.W.WriteMultiBuffer(mb)
+	err, _ = w.W.WriteMultiBuffer(mb)
 	if err != nil {
 		n = 0
 		buf.ReleaseMulti(mb)

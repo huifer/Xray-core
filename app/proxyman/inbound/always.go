@@ -73,6 +73,8 @@ func NewAlwaysOnInboundHandler(ctx context.Context, tag string, receiverConfig *
 		address = net.AnyIP
 	}
 
+	//fixme:
+
 	mss, err := internet.ToMemoryStreamConfig(receiverConfig.StreamSettings)
 	if err != nil {
 		return nil, newError("failed to parse stream config").Base(err).AtWarning()

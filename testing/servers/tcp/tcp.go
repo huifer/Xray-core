@@ -92,7 +92,7 @@ func (server *Server) handleConnection(conn net.Conn) {
 				}
 				return err
 			}
-			if err := w.WriteMultiBuffer(mb); err != nil {
+			if err, _ := w.WriteMultiBuffer(mb); err != nil {
 				return err
 			}
 		}

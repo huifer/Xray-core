@@ -74,7 +74,7 @@ func (s *Server) Process(ctx context.Context, network net.Network, conn stat.Con
 	inbound := session.InboundFromContext(ctx)
 	inbound.Name = "shadowsocks"
 	inbound.SetCanSpliceCopy(3)
-	
+
 	switch network {
 	case net.Network_TCP:
 		return s.handleConnection(ctx, conn, dispatcher)
@@ -239,7 +239,7 @@ func (s *Server) handleConnection(ctx context.Context, conn stat.Connection, dis
 			if err != nil {
 				return err
 			}
-			if err := responseWriter.WriteMultiBuffer(payload); err != nil {
+			if err, _ := responseWriter.WriteMultiBuffer(payload); err != nil {
 				return err
 			}
 		}

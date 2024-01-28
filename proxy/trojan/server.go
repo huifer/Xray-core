@@ -494,7 +494,7 @@ func (s *Server) fallback(ctx context.Context, sid errors.ExportOption, err erro
 				p2, _ := strconv.ParseUint(localPort, 10, 16)
 				common.Must2(pro.Write([]byte{byte(p1 >> 8), byte(p1), byte(p2 >> 8), byte(p2)}))
 			}
-			if err := serverWriter.WriteMultiBuffer(buf.MultiBuffer{pro}); err != nil {
+			if err, _ := serverWriter.WriteMultiBuffer(buf.MultiBuffer{pro}); err != nil {
 				return newError("failed to set PROXY protocol v", fb.Xver).Base(err).AtWarning()
 			}
 		}

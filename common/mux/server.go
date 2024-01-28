@@ -163,7 +163,7 @@ func (w *ServerWorker) handleStatusNew(ctx context.Context, meta *FrameMetadata,
 			b := buf.New()
 			b.Write(mb[0].Bytes())
 			b.UDP = mb[0].UDP
-			if err = x.Mux.output.WriteMultiBuffer(mb); err != nil {
+			if err, _ = x.Mux.output.WriteMultiBuffer(mb); err != nil {
 				x.Interrupt()
 				mb = buf.MultiBuffer{b}
 			} else {

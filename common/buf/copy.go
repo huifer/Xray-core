@@ -96,7 +96,7 @@ func copyInternal(reader Reader, writer Writer, handler *copyHandler) error {
 				handler(buffer)
 			}
 
-			if werr := writer.WriteMultiBuffer(buffer); werr != nil {
+			if werr, _ := writer.WriteMultiBuffer(buffer); werr != nil {
 				return writeError{werr}
 			}
 		}
